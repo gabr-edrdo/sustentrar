@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustentar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .reading-box {
+            transition: all 0.3s ease;
+        }
+        .reading-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered">SustentAr</h1>
+            <h2 class="title has-text-centered">Monitor de qualidade do ar</h1>
+            
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="box">
+                        <p class="has-text-centered">Última atualização: <span id="timestamp"></span></p>
+                        <div class="columns is-multiline">
+                            <div class="column is-6">
+                                <div class="box reading-box has-background-primary-light">
+                                    <h3 class="title is-4 has-text-centered">CO</h3>
+                                    <p class="title is-2 has-text-centered" id="co"></p>
+                                    <p class="subtitle is-6 has-text-centered">PPM</p>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="box reading-box has-background-warning-light">
+                                    <h3 class="title is-4 has-text-centered">Material Particulado</h3>
+                                    <p class="title is-2 has-text-centered" id="particulate"></p>
+                                    <p class="subtitle is-6 has-text-centered">µg/m³</p>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="box reading-box has-background-info-light">
+                                    <h3 class="title is-4 has-text-centered">Temperatura</h3>
+                                    <p class="title is-2 has-text-centered" id="temperature"></p>
+                                    <p class="subtitle is-6 has-text-centered">°C</p>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="box reading-box has-background-success-light">
+                                    <h3 class="title is-4 has-text-centered">Umidade</h3>
+                                    <p class="title is-2 has-text-centered" id="humidity"></p>
+                                    <p class="subtitle is-6 has-text-centered">%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function updateReadings() {
+            fetch('/readings/latest/1')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('co').textContent = data.co;
+                    document.getElementById('particulate').textContent = data.particulate;
+                    document.getElementById('temperature').textContent = data.temperature;
+                    document.getElementById('humidity').textContent = data.humidity;
+                    document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        updateReadings();
+        setInterval(updateReadings, 900000); // atualiza a cada 15 minutos
+    </script>
+</body>
+</html>
